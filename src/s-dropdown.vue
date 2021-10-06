@@ -11,18 +11,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-function getElementPosition($el: HTMLElement): { top: number; left: number; } {
-  const {
-    x,
-    y,
-  } = $el.getBoundingClientRect();
-
-  return {
-    top: y,
-    left: x,
-  };
-}
-
 function getScrollParent(element: HTMLElement, includeHidden: boolean = true): HTMLElement | null {
   let style = getComputedStyle(element);
   const excludeStaticParent = style.position === "absolute";
@@ -54,6 +42,16 @@ export default defineComponent({
       type: Number,
       required: false,
       default: 10,
+    },
+    align: {
+      type: String as () => "right" | "left",
+      required: false,
+      default: "right",
+    },
+    position: {
+      type: String as () => "top" | "bottom",
+      required: false,
+      default: "bottom",
     },
   },
   data() {
@@ -89,7 +87,7 @@ export default defineComponent({
     toggle() {
       this.isOpen = !this.isOpen;
     },
-    windowOnClick(event: MouseEvent) {
+    windowOnClick(event: MouseEvent | TouchEvent) {
       if (this.$refs.dropdown) {
         const $dropdown = this.$refs.dropdown as HTMLElement;
 
@@ -101,37 +99,39 @@ export default defineComponent({
     resetPosition() {
       const $el = document.getElementById(this.id);
       const $scrollParent = this.scrollParentElement;
+      const $dropdown = this.$refs.dropdown as HTMLElement;
 
       if ($el && $scrollParent) {
         const {
-          top,
-          left,
-        } = getElementPosition($el);
-
-        const h = $el.clientHeight;
-        const w = $el.clientWidth;
-
-        this.top = top + h + this.offset;
-        this.left = left;
+          width,
+          height,
+          x,
+          y,
+        } = $el.getBoundingClientRect();
 
         this.$nextTick(() => {
-          const $dropdown = this.$refs.dropdown as HTMLElement;
-
           const dW = $dropdown.clientWidth;
           const dH = $dropdown.clientHeight;
 
-          const isOutX = dW + left > $scrollParent.clientWidth;
-          const isOutY = dH + top > $scrollParent.clientHeight;
+          const hasEnoughSpaceX = dW < x;
+          const hasEnoughSpaceY = dH < y;
 
-          const hasEnoughSpaceX = dW < left;
-          const hasEnoughSpaceY = dH < top;
+          const isOutX = dW + x > $scrollParent.clientWidth;
+          const isOutY = dH + y > $scrollParent.clientHeight;
 
-          if (isOutX && hasEnoughSpaceX) {
-            this.left = left - dW + w;
+          const isLeft = (this.align === 'left' || isOutX) && hasEnoughSpaceX;
+          const isTop = (this.position === 'top' || isOutY) && hasEnoughSpaceY;
+
+          if (isLeft) {
+            this.left = x - dW + width;
+          } else {
+            this.left = x;
           }
 
-          if (isOutY && hasEnoughSpaceY) {
-            this.top = top - dH - this.offset;
+          if (isTop) {
+            this.top = y - dH - this.offset;
+          } else {
+            this.top = y + height + this.offset;
           }
         });
       }
@@ -154,7 +154,8 @@ export default defineComponent({
           window.addEventListener('scroll', this.resetPosition, { passive: true });
           window.addEventListener('resize', this.resetPosition, { passive: true });
 
-          window.addEventListener('click', this.windowOnClick, { passive: true });
+          window.addEventListener('mousedown', this.windowOnClick, { passive: true });
+          window.addEventListener('touchstart', this.windowOnClick, { passive: true });
         }, 0);
       } else {
         if (this.scrollParentElement) {
@@ -166,7 +167,8 @@ export default defineComponent({
         window.removeEventListener('scroll', this.resetPosition);
         window.removeEventListener('resize', this.resetPosition);
 
-        window.removeEventListener('click', this.windowOnClick);
+        window.removeEventListener('mousedown', this.windowOnClick);
+        window.removeEventListener('touchstart', this.windowOnClick);
       }
 
       this.resetPosition();

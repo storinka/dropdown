@@ -1,7 +1,7 @@
 <template>
   <div id="app" style="height: 100vh; overflow: scroll;">
     <div style="height: 80%;"/>
-    <SDropdown>
+    <SDropdown position="top" align="right">
       <template #toggle="{ id, toggle }">
         <button style="margin-left: 200px;" :id="id" @click="toggle">Toggle</button>
       </template>

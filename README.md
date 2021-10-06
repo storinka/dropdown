@@ -64,6 +64,22 @@ Provide custom z-index for dropdown container.
 
 Provide custom offset for dropdown container from toggle element.
 
+### `align`
+
+- Type: `string | undefined`
+- Value: `"left" | "right"`
+- Default: `"right"`
+
+Provide initial dropdown align.
+
+### `position`
+
+- Type: `string | undefined`
+- Value: `"top" | "bottom"`
+- Default: `"bottom"`
+
+Provide initial dropdown position.
+
 ## Customization
 
 If you want to customize the dropdown, you can apply any styles to `s-dropdown` class.
