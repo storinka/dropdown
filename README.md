@@ -7,18 +7,18 @@ Highly customizable, simple and modern Vue 3 dropdown component.
 #### 1. Install package via NPM or Yarn:
 
 ```shell
-yarn add @storinka/vue-dropdown
+yarn add @storinka/dropdown
 ```
 
 ```shell
-npm i @storinka/vue-dropdown
+npm i @storinka/dropdown
 ```
 
 #### 2. Install as Vue plugin:
 
 ```javascript
 import { createApp } from "vue";
-import SDropdown from "@storinka/vue-dropdown";
+import SDropdown from "@storinka/dropdown";
 
 const app = createApp();
 
