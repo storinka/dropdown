@@ -1,3 +1,3 @@
 #!/bin/bash
 
-npm publish --access public
+yarn build && npm publish --access public
