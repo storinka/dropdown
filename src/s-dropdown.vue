@@ -11,29 +11,17 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-const regex = /(auto|scroll)/;
+function getScrollParent(node: HTMLElement | null): HTMLElement | null {
+  if (node == null) {
+    return null;
+  }
 
-function isOverflow(node: HTMLElement): boolean {
-  return node.scrollHeight > node.clientHeight;
+  if (node.scrollHeight > node.clientHeight) {
+    return node;
+  } else {
+    return getScrollParent(node.parentNode as HTMLElement);
+  }
 }
-
-
-const style = (node: HTMLElement, prop: string) =>
-    getComputedStyle(node, null).getPropertyValue(prop);
-
-const scroll = (node: HTMLElement) =>
-    regex.test(
-        style(node, "overflow") +
-        style(node, "overflow-y") +
-        style(node, "overflow-x"));
-
-const getScrollParent = (node: HTMLElement | null): HTMLElement | null =>
-    !node || node === document.body
-        ? document.body
-        : scroll(node) && isOverflow(node)
-            ? node
-            : getScrollParent(node.parentNode as HTMLElement);
-
 
 let id = 0;
 
