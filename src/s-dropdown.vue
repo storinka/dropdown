@@ -13,7 +13,7 @@ import { defineComponent } from 'vue';
 
 function getScrollParent(node: HTMLElement | null): HTMLElement | null {
   if (node == null) {
-    return null;
+    return document.body;
   }
 
   if (node.scrollHeight > node.clientHeight) {
@@ -82,6 +82,17 @@ export default defineComponent({
         isOpen: this.isOpen,
       };
     },
+  },
+  beforeUnmount() {
+    if (this.scrollParentElement) {
+      this.scrollParentElement.removeEventListener('scroll', this.resetPosition);
+    }
+
+    window.removeEventListener('scroll', this.resetPosition);
+    window.removeEventListener('resize', this.resetPosition);
+
+    window.removeEventListener('mousedown', this.windowOnClick);
+    window.removeEventListener('touchstart', this.windowOnClick);
   },
   methods: {
     toggle() {
