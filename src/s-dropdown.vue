@@ -11,22 +11,29 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-function getScrollParent(element: HTMLElement, includeHidden: boolean = true): HTMLElement | null {
-  let style = getComputedStyle(element);
-  const excludeStaticParent = style.position === "absolute";
-  const overflowRegex = includeHidden ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
+const regex = /(auto|scroll)/;
 
-  if (style.position === "fixed") return document.body;
-  for (let parent: HTMLElement | null = element; (parent = parent.parentElement);) {
-    style = getComputedStyle(parent);
-    if (excludeStaticParent && style.position === "static") {
-      continue;
-    }
-    if (overflowRegex.test(style.overflow + style.overflowY + style.overflowX)) return parent;
-  }
-
-  return document.body;
+function isOverflow(node: HTMLElement): boolean {
+  return node.scrollHeight > node.clientHeight;
 }
+
+
+const style = (node: HTMLElement, prop: string) =>
+    getComputedStyle(node, null).getPropertyValue(prop);
+
+const scroll = (node: HTMLElement) =>
+    regex.test(
+        style(node, "overflow") +
+        style(node, "overflow-y") +
+        style(node, "overflow-x"));
+
+const getScrollParent = (node: HTMLElement | null): HTMLElement | null =>
+    !node || node === document.body
+        ? document.body
+        : scroll(node) && isOverflow(node)
+            ? node
+            : getScrollParent(node.parentNode as HTMLElement);
+
 
 let id = 0;
 
@@ -52,6 +59,11 @@ export default defineComponent({
       type: String as () => "top" | "bottom",
       required: false,
       default: "bottom",
+    },
+    hover: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   data() {
