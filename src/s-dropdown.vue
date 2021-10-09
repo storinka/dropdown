@@ -106,6 +106,7 @@ export default defineComponent({
         top: `${this.top}px`,
         left: `${this.left}px`,
         maxWidth: this.width != null ? `${this.width}px` : undefined,
+        width: this.width != null ? `${this.width}px` : undefined,
       };
     },
     slotProps(): unknown {
