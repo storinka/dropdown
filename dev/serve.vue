@@ -2,6 +2,50 @@
   <div class="example">
     <div class="props">
       <div class="props-group">
+        <div class="prop-title">theme:</div>
+
+        <label for="theme_light">
+          <input
+              type="radio"
+              value="light"
+              id="theme_light"
+              name="theme"
+              v-model="theme"
+          />
+          light
+        </label>
+        <label for="theme_dark">
+          <input
+              type="radio"
+              value="dark"
+              id="theme_dark"
+              name="theme"
+              v-model="theme"
+          />
+          dark
+        </label>
+        <label for="theme_tooltip-light">
+          <input
+              type="radio"
+              value="tooltip-light"
+              id="theme_tooltip-light"
+              name="theme"
+              v-model="theme"
+          />
+          tooltip-light
+        </label>
+        <label for="theme_tooltip-dark">
+          <input
+              type="radio"
+              value="tooltip-dark"
+              id="theme_tooltip-dark"
+              name="theme"
+              v-model="theme"
+          />
+          tooltip-dark
+        </label>
+      </div>
+      <div class="props-group">
         <div class="prop-title">position:</div>
 
         <label for="position_top">
@@ -48,6 +92,16 @@
           />
           left
         </label>
+        <label for="align_center">
+          <input
+              type="radio"
+              value="center"
+              id="align_center"
+              name="align"
+              v-model="align"
+          />
+          center
+        </label>
       </div>
       <div class="props-group">
         <div class="prop-title">offset:</div>
@@ -56,23 +110,21 @@
           <input type="number" id="offset" name="offset" v-model="offset"/>
         </label>
       </div>
+      <div class="props-group">
+        <div class="prop-title">hover:</div>
+
+        <label for="hover">
+          <input type="checkbox" id="hover" name="hover" v-model="hover"/>
+        </label>
+      </div>
     </div>
     <div style="overflow: auto; max-height: 100px;">
-      <SDropdown :offset="offset" :align="align" :position="position">
+      <SDropdown :hover="hover" :theme="theme" :offset="offset" :align="align" :position="position">
         <template #toggle="{ id, toggle }">
           <button :id="id" @click="toggle">Toggle</button>
         </template>
 
-        <div
-            style="
-            width: 200px;
-            height: 200px;
-            border: 1px solid #ccc;
-            background-color: white;
-          "
-        >
-          dropdown content
-        </div>
+        dropdown content
       </SDropdown>
     </div>
   </div>
@@ -92,12 +144,24 @@ export default defineComponent({
       position: "top",
       align: "left",
       offset: 10,
+      theme: "light",
+      hover: false,
     };
   },
+  watch: {
+    hover(hover) {
+      console.log('hover', hover)
+    }
+  }
 });
 </script>
 
 <style>
+@import "../src/styles/light-theme.css";
+@import "../src/styles/dark-theme.css";
+@import "../src/styles/tooltip-light-theme.css";
+@import "../src/styles/tooltip-dark-theme.css";
+
 .example {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   display: flex;

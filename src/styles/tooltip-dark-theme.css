@@ -1,0 +1,42 @@
+.s-dropdown.s-dropdown-tooltip-dark-theme {
+    padding: 10px 20px;
+    text-align: center;
+
+    background-color: #333;
+    border-radius: 10px;
+
+    color: white;
+}
+
+.s-dropdown-tooltip-dark-theme::after {
+    content: " ";
+
+    position: absolute;
+
+    top: 100%;
+    left: 50%;
+
+    margin-left: -5px;
+
+    border-width: 5px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+}
+
+.s-dropdown-position-bottom.s-dropdown-tooltip-dark-theme::after {
+    top: 0;
+    bottom: 100%;
+    left: 50%;
+
+    margin-top: -10px;
+
+    border-color: transparent transparent #333 transparent;
+}
+
+.s-dropdown-align-right.s-dropdown-tooltip-dark-theme::after {
+    left: 15%;
+}
+
+.s-dropdown-align-left.s-dropdown-tooltip-dark-theme::after {
+    left: 85%;
+}

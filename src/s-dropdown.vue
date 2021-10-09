@@ -2,7 +2,12 @@
   <slot name="toggle" v-bind="slotProps"/>
 
   <Teleport to="body">
-    <div v-show="isOpen" ref="dropdown" class="s-dropdown" :style="style">
+    <div :class="classes"
+         v-show="isOpen"
+         ref="dropdown"
+         class="s-dropdown"
+         :style="style"
+    >
       <slot v-bind="slotProps"/>
     </div>
   </Teleport>
@@ -39,7 +44,7 @@ export default defineComponent({
       default: 10,
     },
     align: {
-      type: String as () => "right" | "left",
+      type: String as () => "right" | "left" | "center",
       required: false,
       default: "right",
     },
@@ -47,6 +52,10 @@ export default defineComponent({
       type: String as () => "top" | "bottom",
       required: false,
       default: "bottom",
+    },
+    theme: {
+      type: String,
+      required: false,
     },
     hover: {
       type: Boolean,
@@ -64,9 +73,26 @@ export default defineComponent({
       left: 0,
 
       scrollParentElement: null as HTMLElement | null,
+
+      currentAlign: this.align,
+      currentPosition: this.position,
+
+      toggleElement: null as HTMLElement | null,
     };
   },
   computed: {
+    classes(): string[] {
+      const classes = [
+        `s-dropdown-align-${this.currentAlign}`,
+        `s-dropdown-position-${this.currentPosition}`,
+      ];
+
+      if (this.theme) {
+        classes.push(`s-dropdown-${this.theme}-theme`);
+      }
+
+      return classes;
+    },
     style(): unknown {
       return {
         zIndex: this.zIndex,
@@ -83,22 +109,33 @@ export default defineComponent({
       };
     },
   },
+  updated() {
+    this.removeHoverListeners();
+
+    this.toggleElement = document.getElementById(this.id);
+    this.scrollParentElement = getScrollParent(this.toggleElement);
+
+    this.addHoverListeners();
+  },
+  mounted() {
+    this.toggleElement = document.getElementById(this.id);
+    this.scrollParentElement = getScrollParent(this.toggleElement);
+  },
   beforeUnmount() {
-    if (this.scrollParentElement) {
-      this.scrollParentElement.removeEventListener('scroll', this.resetPosition);
-    }
-
-    window.removeEventListener('scroll', this.resetPosition);
-    window.removeEventListener('resize', this.resetPosition);
-
-    window.removeEventListener('mousedown', this.windowOnClick);
-    window.removeEventListener('touchstart', this.windowOnClick);
+    this.removeScrollListeners();
+    this.removeWindowListeners();
+    this.removeHoverListeners();
   },
   methods: {
     toggle() {
       this.isOpen = !this.isOpen;
     },
     windowOnClick(event: MouseEvent | TouchEvent) {
+      const $toggle = document.getElementById(this.id);
+      if ($toggle?.contains(event.target as Node)) {
+        return;
+      }
+
       if (this.$refs.dropdown) {
         const $dropdown = this.$refs.dropdown as HTMLElement;
 
@@ -108,17 +145,17 @@ export default defineComponent({
       }
     },
     resetPosition() {
-      const $el = document.getElementById(this.id);
+      const $toggle = this.toggleElement;
       const $scrollParent = this.scrollParentElement;
       const $dropdown = this.$refs.dropdown as HTMLElement;
 
-      if ($el && $scrollParent) {
+      if ($toggle && $scrollParent) {
         const {
-          width,
-          height,
+          width: tW,
+          height: tH,
           x,
           y,
-        } = $el.getBoundingClientRect();
+        } = $toggle.getBoundingClientRect();
 
         this.$nextTick(() => {
           const dW = $dropdown.clientWidth;
@@ -133,60 +170,119 @@ export default defineComponent({
           const isLeft = (this.align === 'left' || isOutX) && hasEnoughSpaceX;
           const isTop = (this.position === 'top' || isOutY) && hasEnoughSpaceY;
 
-          if (isLeft) {
-            this.left = x - dW + width;
+          if (this.align === 'center') {
+            this.left = x + (tW / 2) - (dW / 2);
+
+            this.currentAlign = 'center';
+          } else if (isLeft) {
+            this.left = x - dW + tW;
+
+            this.currentAlign = 'left';
           } else {
             this.left = x;
+
+            this.currentAlign = 'right';
           }
 
           if (isTop) {
             this.top = y - dH - this.offset;
+
+            this.currentPosition = 'top';
           } else {
-            this.top = y + height + this.offset;
+            this.top = y + tH + this.offset;
+
+            this.currentPosition = 'bottom';
           }
         });
       }
     },
-  },
-  watch: {
-    isOpen(isOpen) {
-      if (isOpen) {
-        const $el = document.getElementById(this.id);
 
-        if ($el) {
-          this.scrollParentElement = getScrollParent($el);
+    onMouseEnter(): void {
+      if (this.hover) {
+        this.isOpen = true;
+      }
+    },
+    onMouseOut(): void {
+      if (this.hover) {
+        this.isOpen = false;
+      }
+    },
 
-          if (this.scrollParentElement) {
-            this.scrollParentElement.addEventListener('scroll', this.resetPosition, { passive: true });
-          }
-        }
-
-        setTimeout(() => {
-          window.addEventListener('scroll', this.resetPosition, { passive: true });
-          window.addEventListener('resize', this.resetPosition, { passive: true });
-
-          window.addEventListener('mousedown', this.windowOnClick, { passive: true });
-          window.addEventListener('touchstart', this.windowOnClick, { passive: true });
-        }, 0);
-      } else {
-        if (this.scrollParentElement) {
-          this.scrollParentElement.removeEventListener('scroll', this.resetPosition);
-
-          this.scrollParentElement = null;
-        }
-
-        window.removeEventListener('scroll', this.resetPosition);
-        window.removeEventListener('resize', this.resetPosition);
-
-        window.removeEventListener('mousedown', this.windowOnClick);
-        window.removeEventListener('touchstart', this.windowOnClick);
+    addHoverListeners() {
+      if (this.toggleElement) {
+        this.toggleElement.addEventListener('mouseover', this.onMouseEnter, { passive: true });
+        this.toggleElement.addEventListener('mouseout', this.onMouseOut, { passive: true });
       }
 
-      this.resetPosition();
+      const dropdownElement = this.$refs.dropdown as HTMLElement;
+      dropdownElement.addEventListener('mouseover', this.onMouseEnter, { passive: true });
+      dropdownElement.addEventListener('mouseout', this.onMouseOut, { passive: true });
     },
+    removeHoverListeners() {
+      if (this.toggleElement) {
+        this.toggleElement.removeEventListener('mouseover', this.onMouseEnter);
+        this.toggleElement.removeEventListener('mouseout', this.onMouseOut);
+      }
+
+      const dropdownElement = this.$refs.dropdown as HTMLElement;
+      dropdownElement.removeEventListener('mouseover', this.onMouseEnter);
+      dropdownElement.removeEventListener('mouseout', this.onMouseOut);
+    },
+
+    addWindowListeners() {
+      window.addEventListener('scroll', this.resetPosition, { passive: true });
+      window.addEventListener('resize', this.resetPosition, { passive: true });
+
+      window.addEventListener('mousedown', this.windowOnClick, { passive: true });
+      window.addEventListener('touchstart', this.windowOnClick, { passive: true });
+    },
+    removeWindowListeners() {
+      window.removeEventListener('scroll', this.resetPosition);
+      window.removeEventListener('resize', this.resetPosition);
+
+      window.removeEventListener('mousedown', this.windowOnClick);
+      window.removeEventListener('touchstart', this.windowOnClick);
+    },
+
+    addScrollListeners() {
+      if (this.scrollParentElement) {
+        this.scrollParentElement.addEventListener('scroll', this.resetPosition, { passive: true });
+      }
+    },
+    removeScrollListeners() {
+      if (this.scrollParentElement) {
+        this.scrollParentElement.removeEventListener('scroll', this.resetPosition);
+      }
+    },
+  },
+  watch: {
+    isOpen: {
+      immediate: true,
+      handler(isOpen) {
+        if (isOpen) {
+          this.addScrollListeners();
+
+          setTimeout(() => {
+            this.addWindowListeners();
+          }, 0);
+        } else {
+          this.removeScrollListeners();
+          this.removeWindowListeners();
+        }
+
+        this.resetPosition();
+      }
+    },
+    hover(hover) {
+      if (hover) {
+        this.addHoverListeners();
+      } else {
+        this.removeHoverListeners();
+      }
+    }
   },
 });
 </script>
 
-<style lang="scss">
+<style>
 </style>
