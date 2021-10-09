@@ -62,6 +62,11 @@ export default defineComponent({
       required: false,
       default: false,
     },
+    keepToggleWidth: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   data() {
     return {
@@ -71,6 +76,7 @@ export default defineComponent({
 
       top: 0,
       left: 0,
+      width: undefined as number | undefined,
 
       scrollParentElement: null as HTMLElement | null,
 
@@ -99,6 +105,7 @@ export default defineComponent({
         position: 'fixed',
         top: `${this.top}px`,
         left: `${this.left}px`,
+        maxWidth: this.width != null ? `${this.width}px` : undefined,
       };
     },
     slotProps(): unknown {
@@ -150,15 +157,21 @@ export default defineComponent({
       const $dropdown = this.$refs.dropdown as HTMLElement;
 
       if ($toggle && $scrollParent) {
-        const {
-          width: tW,
-          height: tH,
-          x,
-          y,
-        } = $toggle.getBoundingClientRect();
-
         this.$nextTick(() => {
-          const dW = $dropdown.clientWidth;
+          const {
+            width: tW,
+            height: tH,
+            x,
+            y,
+          } = $toggle.getBoundingClientRect();
+
+          if (this.keepToggleWidth) {
+            this.width = tW;
+          } else {
+            this.width = undefined;
+          }
+
+          const dW = this.width || $dropdown.clientWidth;
           const dH = $dropdown.clientHeight;
 
           const hasEnoughSpaceX = dW < x;

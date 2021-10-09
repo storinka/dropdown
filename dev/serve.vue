@@ -4,6 +4,16 @@
       <div class="props-group">
         <div class="prop-title">theme:</div>
 
+        <label for="theme_none">
+          <input
+              type="radio"
+              :value="undefined"
+              id="theme_none"
+              name="theme"
+              v-model="theme"
+          />
+          none
+        </label>
         <label for="theme_light">
           <input
               type="radio"
@@ -118,13 +128,15 @@
         </label>
       </div>
     </div>
-    <div style="overflow: auto; max-height: 100px;">
-      <SDropdown :hover="hover" :theme="theme" :offset="offset" :align="align" :position="position">
+    <div style="max-height: 100px;">
+      <SDropdown keep-toggle-width :hover="hover" :theme="theme" :offset="offset" :align="align" :position="position">
         <template #toggle="{ id, toggle }">
-          <button :id="id" @click="toggle">Toggle</button>
+          <button style="width: 10vw;" :id="id" @click="toggle">Toggle</button>
         </template>
 
-        dropdown content
+        <div style="border: 1px solid black;">
+          dropdown content
+        </div>
       </SDropdown>
     </div>
   </div>

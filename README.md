@@ -80,6 +80,20 @@ Provide initial dropdown align.
 
 Provide initial dropdown position.
 
+### `theme`
+
+- Type: `string | undefined`
+- Default: `undefined`
+
+Specify a theme.
+
+### `hover`
+
+- Type: `boolean | undefined`
+- Default: `false`
+
+Open dropdown on hover.
+
 ## Customization
 
 If you want to customize the dropdown, you can apply any styles to `s-dropdown` class.
