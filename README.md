@@ -83,6 +83,7 @@ Provide initial dropdown position.
 ### `theme`
 
 - Type: `string | undefined`
+- Value: `"light" | "dark" | "tooltip-light" | "tooltip-dark"`
 - Default: `undefined`
 
 Specify a theme.

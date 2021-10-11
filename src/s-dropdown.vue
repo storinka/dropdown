@@ -299,4 +299,8 @@ export default defineComponent({
 </script>
 
 <style>
+@import "./styles/dark-theme.css";
+@import "./styles/light-theme.css";
+@import "./styles/tooltip-dark-theme.css";
+@import "./styles/tooltip-light-theme.css";
 </style>

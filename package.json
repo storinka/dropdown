@@ -1,6 +1,6 @@
 {
   "name": "@storinka/dropdown",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Highly customizable, simple and modern Vue 3 dropdown component.",
   "main": "dist/s-dropdown.ssr.js",
   "browser": "dist/s-dropdown.esm.js",
