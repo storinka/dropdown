@@ -2,9 +2,20 @@
   <slot name="toggle" v-bind="slotProps"/>
 
   <Teleport to="body">
+    <Transition v-bind="transition" v-if="transition">
+      <div :class="classes"
+           v-show="isReallyOpen"
+           ref="dropdown"
+           class="s-dropdown"
+           :style="style"
+      >
+        <slot v-bind="slotProps"/>
+      </div>
+    </Transition>
     <div :class="classes"
          v-show="isReallyOpen"
          ref="dropdown"
+         v-else
          class="s-dropdown"
          :style="style"
     >
@@ -72,6 +83,13 @@ export default defineComponent({
       required: false,
       default: true,
     },
+    transition: {
+      type: Object,
+      required: false,
+      default: () => ({
+        name: 's-dropdown',
+      }),
+    }
   },
   data() {
     return {
@@ -309,4 +327,16 @@ export default defineComponent({
 </script>
 
 <style>
+.s-dropdown-enter-active, .s-dropdown-leave-active {
+  transition: transform 50ms ease, opacity 100ms ease;
+}
+
+.s-dropdown-enter-from, .s-dropdown-leave-active {
+  transform: translateY(5px);
+  opacity: 0;
+}
+
+.s-dropdown-position-bottom.s-dropdown-enter-from, .s-dropdown-position-bottom.s-dropdown-leave-active {
+  transform: translateY(-5px);
+}
 </style>

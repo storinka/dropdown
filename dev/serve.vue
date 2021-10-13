@@ -129,12 +129,13 @@
       </div>
     </div>
     <div style="max-height: 100px;">
-      <SDropdown keep-toggle-width :hover="hover" :theme="theme" :offset="offset" :align="align" :position="position">
+      <SDropdown :transition="{ name: 's-dropdown' }" :hover="hover" :theme="theme" :offset="offset"
+                 :align="align" :position="position">
         <template #toggle="{ id, toggle }">
           <button style="width: 10vw;" :id="id" @click="toggle">Toggle</button>
         </template>
 
-        <div style="border: 1px solid black;">
+        <div>
           dropdown content
         </div>
       </SDropdown>
@@ -164,6 +165,11 @@ export default defineComponent({
 </script>
 
 <style>
+@import "../src/styles/tooltip-light-theme.css";
+@import "../src/styles/tooltip-dark-theme.css";
+@import "../src/styles/light-theme.css";
+@import "../src/styles/dark-theme.css";
+
 .example {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   display: flex;
