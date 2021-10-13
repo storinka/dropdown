@@ -3,7 +3,7 @@
 
   <Teleport to="body">
     <div :class="classes"
-         v-show="isOpen"
+         v-show="isReallyOpen"
          ref="dropdown"
          class="s-dropdown"
          :style="style"
@@ -67,6 +67,11 @@ export default defineComponent({
       required: false,
       default: false,
     },
+    isEnabled: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
   },
   data() {
     return {
@@ -87,6 +92,9 @@ export default defineComponent({
     };
   },
   computed: {
+    isReallyOpen() {
+      return this.isEnabled && this.isOpen;
+    },
     classes(): string[] {
       const classes = [
         `s-dropdown-align-${this.currentAlign}`,
@@ -113,7 +121,7 @@ export default defineComponent({
       return {
         id: this.id,
         toggle: this.toggle,
-        isOpen: this.isOpen,
+        isOpen: this.isReallyOpen,
       };
     },
   },
@@ -272,10 +280,10 @@ export default defineComponent({
     },
   },
   watch: {
-    isOpen: {
+    isReallyOpen: {
       immediate: true,
-      handler(isOpen) {
-        if (isOpen) {
+      handler(isReallyOpen) {
+        if (isReallyOpen) {
           this.addScrollListeners();
 
           setTimeout(() => {

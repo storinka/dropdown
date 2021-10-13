@@ -28,6 +28,7 @@ app.use(SDropdown);
 ## Usage
 
 ```vue
+
 <template>
   <div class="container">
     <SDropdown>
@@ -93,6 +94,13 @@ Specify a theme.
 - Default: `false`
 
 Open dropdown on hover.
+
+### `is-enabled`
+
+- Type: `boolean | undefined`
+- Default: `true`
+
+Enable or disable dropdown.
 
 ## Themes
 
