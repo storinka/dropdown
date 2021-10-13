@@ -100,16 +100,16 @@ The component by default comes without any styles. But, there are few built-in t
 
 ```javascript
 // theme: "dark"
-import "@storinka/dropdown/styles/dark-theme.css";
+import "@storinka/dropdown/dist/styles/dark-theme.css";
 
 // theme: "light"
-import "@storinka/dropdown/styles/light-theme.css";
+import "@storinka/dropdown/dist/styles/light-theme.css";
 
 // theme: "tooltip-dark"
-import "@storinka/dropdown/styles/tooltip-dark-theme.css";
+import "@storinka/dropdown/dist/styles/tooltip-dark-theme.css";
 
 // theme: "tooltip-light"
-import "@storinka/dropdown/styles/tooltip-light-theme.css";
+import "@storinka/dropdown/dist/styles/tooltip-light-theme.css";
 ```
 
 ## Customization

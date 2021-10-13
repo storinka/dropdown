@@ -128,6 +128,8 @@ export default defineComponent({
   mounted() {
     this.toggleElement = document.getElementById(this.id);
     this.scrollParentElement = getScrollParent(this.toggleElement);
+
+    this.addHoverListeners();
   },
   beforeUnmount() {
     this.removeScrollListeners();
