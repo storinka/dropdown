@@ -1,6 +1,6 @@
 {
   "name": "@storinka/dropdown",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Highly customizable, simple and modern Vue 3 dropdown component.",
   "main": "dist/s-dropdown.ssr.js",
   "browser": "dist/s-dropdown.esm.js",
@@ -42,6 +42,7 @@
     "postcss": "^8.2.10",
     "rimraf": "^3.0.2",
     "rollup": "^2.52.8",
+    "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-postcss": "^4.0.0",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.30.0",

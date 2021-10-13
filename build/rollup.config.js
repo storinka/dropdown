@@ -12,6 +12,7 @@ import { terser } from 'rollup-plugin-terser';
 import ttypescript from 'ttypescript';
 import typescript from 'rollup-plugin-typescript2';
 import minimist from 'minimist';
+import copy from "rollup-plugin-copy";
 
 // Get browserslist config and remove ie from es build targets
 const esbrowserslist = fs.readFileSync('./.browserslistrc')
@@ -39,6 +40,11 @@ const baseConfig = {
           },
         ],
       }),
+      copy({
+        targets: [
+          { src: 'src/styles', dest: 'dist' },
+        ]
+      })
     ],
     replace: {
       'process.env.NODE_ENV': JSON.stringify('production'),

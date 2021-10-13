@@ -160,20 +160,10 @@ export default defineComponent({
       hover: false,
     };
   },
-  watch: {
-    hover(hover) {
-      console.log('hover', hover)
-    }
-  }
 });
 </script>
 
 <style>
-@import "../src/styles/light-theme.css";
-@import "../src/styles/dark-theme.css";
-@import "../src/styles/tooltip-light-theme.css";
-@import "../src/styles/tooltip-dark-theme.css";
-
 .example {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   display: flex;

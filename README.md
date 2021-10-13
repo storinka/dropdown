@@ -28,7 +28,6 @@ app.use(SDropdown);
 ## Usage
 
 ```vue
-
 <template>
   <div class="container">
     <SDropdown>
@@ -94,6 +93,24 @@ Specify a theme.
 - Default: `false`
 
 Open dropdown on hover.
+
+## Themes
+
+The component by default comes without any styles. But, there are few built-in themes you can use.
+
+```javascript
+// theme: "dark"
+import "@storinka/dropdown/styles/dark-theme.css";
+
+// theme: "light"
+import "@storinka/dropdown/styles/light-theme.css";
+
+// theme: "tooltip-dark"
+import "@storinka/dropdown/styles/tooltip-dark-theme.css";
+
+// theme: "tooltip-light"
+import "@storinka/dropdown/styles/tooltip-light-theme.css";
+```
 
 ## Customization
 
