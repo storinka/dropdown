@@ -6,4 +6,6 @@
 
     border: 1px solid #222;
     border-radius: 10px;
+
+    box-sizing: border-box;
 }

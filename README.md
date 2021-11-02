@@ -102,6 +102,14 @@ Open dropdown on hover.
 
 Enable or disable dropdown.
 
+
+### `keep-toggle-width`
+
+- Type: `boolean | undefined`
+- Default: `false`
+
+Enable or disable making dropdown width same as toggle width.
+
 ## Themes
 
 The component by default comes without any styles. But, there are few built-in themes you can use.

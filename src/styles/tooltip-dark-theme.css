@@ -6,6 +6,8 @@
     border-radius: 10px;
 
     color: white;
+
+    box-sizing: border-box;
 }
 
 .s-dropdown-tooltip-dark-theme::after {
