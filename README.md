@@ -27,20 +27,36 @@ app.use(SDropdown);
 
 ## Usage
 
+Example 1 (with provided name):
+
+```vue
+
+<template>
+  <div class="container">
+    <button v-s-dropdown-toggle:some-dropdown>
+      toggle
+    </button>
+    <SDropdown name="some-dropdown">
+      dropdown content
+    </SDropdown>
+  </div>
+</template>
+```
+
+Example 2 (without provided name):
+
 ```vue
 
 <template>
   <div class="container">
     <SDropdown>
-      <template #toggle="{ id, toggle }">
-        <button :id="id" @click="toggle">
-          Toggle
+      <template #toggle="{ name }">
+        <button v-s-dropdown-toggle:[name]>
+          toggle
         </button>
       </template>
 
-      <div style="width: 200px; height: 200px; border: 1px solid #ccc;">
-        dropdown content
-      </div>
+      dropdown content
     </SDropdown>
   </div>
 </template>
@@ -102,13 +118,28 @@ Open dropdown on hover.
 
 Enable or disable dropdown.
 
-
 ### `keep-toggle-width`
 
 - Type: `boolean | undefined`
 - Default: `false`
 
 Enable or disable making dropdown width same as toggle width.
+
+## Slot props
+
+Available slots: `toggle`, `default`
+
+### `name`
+
+- Type: `string`
+
+Dropdown name.
+
+### `isOpen`
+
+- Type: `boolean`
+
+Is dropdown open or not.
 
 ## Themes
 
@@ -140,5 +171,25 @@ If you want to customize the dropdown, you can apply any styles to `s-dropdown` 
     border-radius: 10px;
 
     box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px;
+}
+
+.s-dropdown-position-bottom {
+    /* when position is bottom */
+}
+
+.s-dropdown-position-top {
+    /* when position is top */
+}
+
+.s-dropdown-align-right {
+    /* when align is right */
+}
+
+.s-dropdown-align-left {
+    /* when align is left */
+}
+
+.s-dropdown-align-center {
+    /* when align is center */
 }
 ```

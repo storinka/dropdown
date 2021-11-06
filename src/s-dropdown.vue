@@ -4,7 +4,7 @@
   <Teleport to="body">
     <Transition v-bind="transition" v-if="transition">
       <div :class="classes"
-           v-show="isReallyOpen"
+           v-if="isReallyOpen"
            ref="dropdown"
            class="s-dropdown"
            :style="style"
@@ -13,9 +13,8 @@
       </div>
     </Transition>
     <div :class="classes"
-         v-show="isReallyOpen"
+         v-else-if="isReallyOpen"
          ref="dropdown"
-         v-else
          class="s-dropdown"
          :style="style"
     >
@@ -26,6 +25,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { toggleElements } from "@/directive";
 
 function getScrollParent(node: HTMLElement | null): HTMLElement | null {
   if (node == null) {
@@ -40,6 +40,10 @@ function getScrollParent(node: HTMLElement | null): HTMLElement | null {
 }
 
 let id = 0;
+
+// 1. toggle click
+// 2. render dropdown
+// 3. calculate positions
 
 export default defineComponent({
   name: 'SDropdown',
@@ -68,6 +72,11 @@ export default defineComponent({
       type: String,
       required: false,
     },
+    name: {
+      type: String,
+      required: false,
+      default: () => `s_dropdown_${id++}`,
+    },
     hover: {
       type: Boolean,
       required: false,
@@ -94,8 +103,6 @@ export default defineComponent({
   data() {
     return {
       isOpen: false,
-
-      id: `s_dropdown_${id++}`,
 
       top: 0,
       left: 0,
@@ -137,7 +144,7 @@ export default defineComponent({
     },
     slotProps(): unknown {
       return {
-        id: this.id,
+        name: this.name,
         toggle: this.toggle,
         isOpen: this.isReallyOpen,
       };
@@ -146,13 +153,13 @@ export default defineComponent({
   updated() {
     this.removeHoverListeners();
 
-    this.toggleElement = document.getElementById(this.id);
+    this.toggleElement = this.getToggleElement();
     this.scrollParentElement = getScrollParent(this.toggleElement);
 
     this.addHoverListeners();
   },
   mounted() {
-    this.toggleElement = document.getElementById(this.id);
+    this.toggleElement = this.getToggleElement();
     this.scrollParentElement = getScrollParent(this.toggleElement);
 
     this.addHoverListeners();
@@ -163,11 +170,14 @@ export default defineComponent({
     this.removeHoverListeners();
   },
   methods: {
+    getToggleElement(): HTMLElement | null {
+      return toggleElements.get(this.name ?? '') ?? null;
+    },
     toggle() {
       this.isOpen = !this.isOpen;
     },
     windowOnClick(event: MouseEvent | TouchEvent) {
-      const $toggle = document.getElementById(this.id);
+      const $toggle = this.getToggleElement();
       if ($toggle?.contains(event.target as Node)) {
         return;
       }
@@ -175,18 +185,18 @@ export default defineComponent({
       if (this.$refs.dropdown) {
         const $dropdown = this.$refs.dropdown as HTMLElement;
 
-        if (!$dropdown.contains(event.target as Node)) {
+        if ($dropdown && !$dropdown.contains(event.target as Node)) {
           this.isOpen = false;
         }
       }
     },
     resetPosition() {
-      const $toggle = this.toggleElement;
-      const $scrollParent = this.scrollParentElement;
-      const $dropdown = this.$refs.dropdown as HTMLElement;
+      this.$nextTick(() => {
+        const $toggle = this.toggleElement;
+        const $scrollParent = this.scrollParentElement;
+        const $dropdown = this.$refs.dropdown as HTMLElement;
 
-      if ($toggle && $scrollParent) {
-        this.$nextTick(() => {
+        if ($toggle && $scrollParent && $dropdown) {
           const {
             width: tW,
             height: tH,
@@ -200,17 +210,19 @@ export default defineComponent({
             this.width = undefined;
           }
 
-          const dW = this.width || $dropdown.clientWidth;
-          const dH = $dropdown.clientHeight;
+          const {
+            width: dW,
+            height: dH,
+          } = $dropdown.getBoundingClientRect();
 
-          const hasEnoughSpaceX = dW < x;
-          const hasEnoughSpaceY = dH < y;
+          const hasEnoughSpaceLeft = dW < x;
+          const hasEnoughSpaceTop = dH < y;
 
           const isOutX = dW + x > $scrollParent.clientWidth;
           const isOutY = dH + y > $scrollParent.clientHeight;
 
-          const isLeft = (this.align === 'left' || isOutX) && hasEnoughSpaceX;
-          const isTop = (this.position === 'top' || isOutY) && hasEnoughSpaceY;
+          const isLeft = (this.align === 'left' || isOutX) && hasEnoughSpaceLeft;
+          const isTop = (this.position === 'top' || isOutY) && hasEnoughSpaceTop;
 
           if (this.align === 'center') {
             this.left = x + (tW / 2) - (dW / 2);
@@ -235,8 +247,12 @@ export default defineComponent({
 
             this.currentPosition = 'bottom';
           }
-        });
-      }
+        }
+      });
+    },
+
+    onToggleClick(): void {
+      this.isOpen = !this.isOpen;
     },
 
     onMouseEnter(): void {
@@ -254,21 +270,29 @@ export default defineComponent({
       if (this.toggleElement) {
         this.toggleElement.addEventListener('mouseover', this.onMouseEnter, { passive: true });
         this.toggleElement.addEventListener('mouseout', this.onMouseOut, { passive: true });
+
+        this.toggleElement.addEventListener('click', this.onToggleClick);
       }
 
       const dropdownElement = this.$refs.dropdown as HTMLElement;
-      dropdownElement.addEventListener('mouseover', this.onMouseEnter, { passive: true });
-      dropdownElement.addEventListener('mouseout', this.onMouseOut, { passive: true });
+      if (dropdownElement) {
+        dropdownElement.addEventListener('mouseover', this.onMouseEnter, { passive: true });
+        dropdownElement.addEventListener('mouseout', this.onMouseOut, { passive: true });
+      }
     },
     removeHoverListeners() {
       if (this.toggleElement) {
         this.toggleElement.removeEventListener('mouseover', this.onMouseEnter);
         this.toggleElement.removeEventListener('mouseout', this.onMouseOut);
+
+        this.toggleElement.removeEventListener('click', this.onToggleClick);
       }
 
       const dropdownElement = this.$refs.dropdown as HTMLElement;
-      dropdownElement.removeEventListener('mouseover', this.onMouseEnter);
-      dropdownElement.removeEventListener('mouseout', this.onMouseOut);
+      if (dropdownElement) {
+        dropdownElement.removeEventListener('mouseover', this.onMouseEnter);
+        dropdownElement.removeEventListener('mouseout', this.onMouseOut);
+      }
     },
 
     addWindowListeners() {
@@ -313,6 +337,10 @@ export default defineComponent({
         }
 
         this.resetPosition();
+
+        setTimeout(() => {
+          this.resetPosition();
+        }, 0);
       }
     },
     hover(hover) {

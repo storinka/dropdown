@@ -129,15 +129,17 @@
       </div>
     </div>
     <div style="max-height: 100px;">
-      <SDropdown :transition="{ name: 's-dropdown' }" :hover="hover" :theme="theme" :offset="offset"
-                 :align="align" :position="position">
-        <template #toggle="{ id, toggle }">
-          <button style="width: 10vw;" :id="id" @click="toggle">Toggle</button>
-        </template>
-
-        <div>
-          dropdown content
-        </div>
+      <button style="width: 10vw;"
+              v-s-dropdown-toggle:test>
+        Toggle
+      </button>
+      <SDropdown :hover="hover"
+                 :theme="theme"
+                 :offset="offset"
+                 :align="align"
+                 :position="position"
+                 name="test">
+        dropdown content
       </SDropdown>
     </div>
   </div>
@@ -155,7 +157,7 @@ export default defineComponent({
   data() {
     return {
       position: "top",
-      align: "left",
+      align: "center",
       offset: 10,
       theme: "light",
       hover: false,
