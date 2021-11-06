@@ -171,7 +171,7 @@ export default defineComponent({
   },
   methods: {
     getToggleElement(): HTMLElement | null {
-      return toggleElements.get(this.name || '') ?? null;
+      return toggleElements.get(this.name || '') || null;
     },
     toggle() {
       this.isOpen = !this.isOpen;
