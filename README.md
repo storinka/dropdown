@@ -62,8 +62,6 @@ Example 2 (without provided name):
 </template>
 ```
 
-> **WARNING**: You must always set id provided in template props for toggle element.
-
 ## Props
 
 ### `z-index`
